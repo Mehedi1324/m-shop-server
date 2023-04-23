@@ -12,18 +12,16 @@ app.get('/', (req, res) => {
   res.send('hello from rode js');
 });
 
-const {
-  MongoClient,
-  ObjectId,
-  CURSOR_FLAGS,
-  ClientSession,
-} = require('mongodb');
-const uri = process.env.MONGODB_URL;
-const client = new MongoClient(uri);
+const { MongoClient, ObjectId, ServerApiVersion } = require('mongodb');
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.cgyk5.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 async function run() {
   try {
-    await client.connect();
     const database = client.db('products');
     const latestCollections = database.collection('latest_collections');
     const mostSellingCollections = database.collection('most_sellings');
@@ -41,7 +39,7 @@ async function run() {
 
     // Finding Products From Collection of data_________________
 
-    app.get('/product/:id', async (req, res) => {
+    app.get('/products/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const productCol =
@@ -55,7 +53,7 @@ async function run() {
 
     // Getting most_sellings from mongodb
 
-    app.get('/most_selling', async (req, res) => {
+    app.get('/most_sellings', async (req, res) => {
       const cursor = mostSellingCollections.find({});
       const products = await cursor.toArray();
 
@@ -63,7 +61,7 @@ async function run() {
     });
 
     // Getting top_selling from mongodb
-    app.get('/top_selling', async (req, res) => {
+    app.get('/top_sellings', async (req, res) => {
       const cursor = topSellingCollections.find({});
       const products = await cursor.toArray();
 
