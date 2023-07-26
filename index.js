@@ -44,9 +44,9 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const productCol =
         (await latestCollections.findOne(query)) ||
-        mostSellingCollections.findOne(query) ||
-        topSellingCollections.findOne(query) ||
-        topTrendingCollections.findOne(query);
+        (await mostSellingCollections.findOne(query)) ||
+        (await topSellingCollections.findOne(query)) ||
+        (await topTrendingCollections.findOne(query));
       console.log(productCol);
       res.send(productCol);
     });
